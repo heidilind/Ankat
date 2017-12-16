@@ -7,4 +7,6 @@ target
 /.settings
 /RUNNING_PID
 .g8
-
+.cache-main
+.cache-tests
+/bin/
