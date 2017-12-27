@@ -11,7 +11,7 @@ Requires scala version 2.11.6 and scala play version 2.6.9.
 
 ## Install
 ```
-$ git clone https://github.com/heidilind/Ankat.gitgit
+$ git clone https://github.com/heidilind/Ankat.git
 $ cd duck-server
 ```
 ## Run
