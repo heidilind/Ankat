@@ -1,8 +1,6 @@
 # Ankat
 
-Backend project for applying summer job from vincit (2018). To get and post duck sightings.
-
-The build status of the project in Travis repository:
+Backend project to get and post duck sightings.
 
 [![Build Status](https://travis-ci.org/heidilind/Ankat.svg?branch=master)](https://travis-ci.org/heidilind/Ankat)
 
