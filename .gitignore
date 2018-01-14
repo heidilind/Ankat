@@ -9,4 +9,5 @@ target
 .g8
 .cache-main
 .cache-tests
-/bin/
+/bin/router
+/bin/controller
