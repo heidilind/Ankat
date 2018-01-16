@@ -3,21 +3,36 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json
-import play.api.libs.json.JsValue
+import play.api.libs.json._
+import model.SightingStorage
+import model.Sighting
+
+  import scala.concurrent.ExecutionContext
+  
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
 @Singleton
-class SightingsController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
+class SightingsController @Inject() (cc: ControllerComponents, sightingStorage: SightingStorage) extends AbstractController(cc) {
 
+  implicit val sightingWrites = new Writes[Sighting] {
+    def writes(sighting: Sighting) = Json.obj(
+          "description" -> sighting.description,
+          "count" -> sighting.count
+    )
+  }
+  
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
   }
 
-  def sightings() = Action {
-    Ok(sights)
+  implicit val ec = ExecutionContext.global
+  
+  def sightings() = Action.async { request =>
+    val ducks = sightingStorage.listAll
+    ducks.map(seqSightings => seqSightings.map(_.toString()).mkString(","))
+      .map(x => Ok(x))
   }
 
   def reportSightings() = Action { request =>

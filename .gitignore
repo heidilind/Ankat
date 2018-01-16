@@ -11,3 +11,4 @@ target
 .cache-tests
 /bin/router
 /bin/controller
+/bin/

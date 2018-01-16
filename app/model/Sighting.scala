@@ -11,7 +11,10 @@ import scala.concurrent.{ExecutionContext, Future}
 case class Sighting( 
     description: String, 
     count: Int,
-    id: Long = 0L)
+    id: Long = 0L) {
+  
+  override def toString() = description
+}
 
 class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
 
@@ -23,9 +26,11 @@ class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
   
 }
 
-class SightingStorage @Inject() (@NamedDatabase("mydb") protected val dbConfigProvider: DatabaseConfigProvider)
+class SightingStorage @Inject() (dbConfigProvider: DatabaseConfigProvider)
                                  (implicit executionContext: ExecutionContext)
                                   extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] {
+
+   // private val dbConfig = dbConfigProvider.get[slick.jdbc.JdbcProfile]
 
   val sightings = TableQuery[SightingTable]
 
