@@ -24,6 +24,8 @@ class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
   
 }
 
+
+
 class SightingStorage @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
                                  (implicit executionContext: ExecutionContext)
                                   extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] {
