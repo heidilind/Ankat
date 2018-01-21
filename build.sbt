@@ -11,11 +11,7 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "3.0.0" // heidi lisäsi
 libraryDependencies ++= Seq( // heidi lisäsi
   "com.typesafe.play" %% "play-slick" % "3.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0"
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
+  "com.h2database" % "h2" % "1.4.192",
+  "org.postgresql" % "postgresql" % "42.1.3"
 )
-
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.example.controllers._"
-
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.example.binders._"
