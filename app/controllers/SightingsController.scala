@@ -13,7 +13,7 @@ import scala.util.Try
 import scala.concurrent.Future
 
 @Singleton
-class SightingsController @Inject() (sightingStorage: SightingInterface, specieStorage: SpecieInterface, cc: ControllerComponents)
+class SightingsController @Inject() (sighting: SightingInterface, specie: SpecieInterface, cc: ControllerComponents)
                                     (implicit executionContext: ExecutionContext) extends AbstractController(cc) {
 
 
@@ -41,7 +41,7 @@ class SightingsController @Inject() (sightingStorage: SightingInterface, specieS
   }
 
   def sightings() = Action.async { request =>
-    val ducks = sightingStorage.listAll
+    val ducks = sighting.listAll
     ducks.map(seqSightings => seqSightings.map(_.toString()).mkString("\n\n"))
       .map(x => Ok(x.toString()))
   }
@@ -54,7 +54,7 @@ class SightingsController @Inject() (sightingStorage: SightingInterface, specieS
           BadRequest(Json.obj("status" -> "Bad Request", "message" -> errors.toString())))
       },
       ducks => {
-        sightingStorage.add(ducks)
+        sighting.add(ducks)
           .map(result => Ok(Json.obj("status" -> "Ok", "message" -> result)))
           .recover {
             case e: Exception =>
@@ -65,7 +65,7 @@ class SightingsController @Inject() (sightingStorage: SightingInterface, specieS
   }
 
   def species() = Action.async { request =>
-    val duckSpecies = specieStorage.listSpecies
+    val duckSpecies = specie.listSpecies
     duckSpecies.map(ds => ds.map(_.toString()).mkString(", "))
       .map(x => Ok(x))
   }
