@@ -5,23 +5,60 @@ import javax.inject.Inject
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.PostgresProfile.api._
 import scala.concurrent.{ExecutionContext, Future}
+import org.joda.time.DateTime
+import java.sql.Timestamp
+
+case class Specie(name: String, id: Long = 0L) {
+  override def toString() = name
+}
+
+class SpecieTable(tag: Tag) extends Table[Specie](tag, "specie") {
+      def id   = column[Long]("id", O.PrimaryKey, O.AutoInc)
+      def name = column[String]("name")
+
+      def * = (name, id).mapTo[Specie]
+}
+
 
 case class Sighting( 
-    description: String, 
+    description: String,
+    specie: String, 
+    ts: DateTime,
     count: Int,
     id: Long = 0L) {
   
-  override def toString() = description
+  override def toString() = {
+    s"id: $id,\n" +
+    s"description: $description,\n" +
+    s"specie: $specie,\n" +
+    s"sighting made: $ts,\n" +
+    s"count: $count" 
+  }
+}
+
+
+object speciesStorage{
+  val species = TableQuery[SpecieTable] 
+  
 }
 
 class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
+  
+  implicit val jodaDateTimeType =
+      MappedColumnType.base[DateTime, Timestamp](
+        dt => new Timestamp(dt.getMillis),
+        ts => new DateTime(ts.getTime))
 
+    
   def id = column[Long]("id", O.PrimaryKey,O.AutoInc)
+  def specieName = column[String]("specie")
+  def ts = column[DateTime]("ts")
   def description = column[String]("description")
   def count = column[Int]("count")
 
-  def * = (description, count, id).mapTo[Sighting]
+  def * = (description, specieName, ts, count, id).mapTo[Sighting]
   
+  def specie = foreignKey("specie_fk", specieName, speciesStorage.species)(_.name, onDelete=ForeignKeyAction.Cascade)
 }
 
 
@@ -30,7 +67,9 @@ class SightingStorage @Inject() (protected val dbConfigProvider: DatabaseConfigP
                                  (implicit executionContext: ExecutionContext)
                                   extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] {
 
-
+  
+  val species = speciesStorage.species
+  //val species = TableQuery[SpecieTable]
   val sighting = TableQuery[SightingTable]
 
   def add(sight: Sighting): Future[String] = {
@@ -49,6 +88,10 @@ class SightingStorage @Inject() (protected val dbConfigProvider: DatabaseConfigP
 
   def listAll: Future[Seq[Sighting]] = {
     db.run(sighting.result)
+  }
+  
+  def listSpecies: Future[Seq[Specie]] = {
+    db.run(species.result)
   }
 
 }
