@@ -3,20 +3,10 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-# An example controller showing a sample home page
+
 GET     /                           controllers.SightingsController.index
 GET 	/sightings					controllers.SightingsController.sightings()		
 POST	/sightings/report			controllers.SightingsController.reportSightings()
+GET		/species					controllers.SightingsController.species()
 
-
-
-
-#GET /add/:a/to/:b       controllers.HomeController.add(a: Int, b: Int)
-#GET /and/:a/with/:b     controllers.HomeController.and(a: Boolean, b: Boolean)
-#GET /concat/*args       controllers.HomeController.concat(args: String)
-#GET /sort               controllers.HomeController.sort(num: List[Int])
-#GET /howto/add/:a/to/:b controllers.HomeController.howToAdd(a: Int, b: Int)
-
-
-# Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
