@@ -8,17 +8,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.joda.time.DateTime
 import java.sql.Timestamp
 
-case class Specie(name: String, id: Long = 0L) {
-  override def toString() = name
-}
-
-class SpecieTable(tag: Tag) extends Table[Specie](tag, "specie") {
-      def id   = column[Long]("id", O.PrimaryKey, O.AutoInc)
-      def name = column[String]("name")
-
-      def * = (name, id).mapTo[Specie]
-}
-
 
 case class Sighting( 
     description: String,
@@ -34,12 +23,6 @@ case class Sighting(
     s"sighting made: $ts,\n" +
     s"count: $count" 
   }
-}
-
-
-object speciesStorage{
-  val species = TableQuery[SpecieTable] 
-  
 }
 
 class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
@@ -58,19 +41,17 @@ class SightingTable(tag: Tag) extends Table[Sighting](tag, "sighting") {
 
   def * = (description, specieName, ts, count, id).mapTo[Sighting]
   
-  def specie = foreignKey("specie_fk", specieName, speciesStorage.species)(_.name, onDelete=ForeignKeyAction.Cascade)
+  def specie = foreignKey("specie_fk", specieName, DataStorage.specieTable)(_.name, onDelete=ForeignKeyAction.Cascade)
 }
 
 
 
-class SightingStorage @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+class SightingInterface @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
                                  (implicit executionContext: ExecutionContext)
                                   extends HasDatabaseConfigProvider[slick.jdbc.JdbcProfile] {
 
   
-  val species = speciesStorage.species
-  //val species = TableQuery[SpecieTable]
-  val sighting = TableQuery[SightingTable]
+  val sighting = DataStorage.sightingTable
 
   def add(sight: Sighting): Future[String] = {
     db.run(sighting += sight).map(res => "User successfully added").recover {
@@ -90,8 +71,4 @@ class SightingStorage @Inject() (protected val dbConfigProvider: DatabaseConfigP
     db.run(sighting.result)
   }
   
-  def listSpecies: Future[Seq[Specie]] = {
-    db.run(species.result)
-  }
-
 }

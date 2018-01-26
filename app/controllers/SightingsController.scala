@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import model.{ Sighting, Specie, SightingStorage }
+import model.{ Sighting, Specie, SightingInterface, SpecieInterface }
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.functional.syntax._
@@ -13,15 +13,9 @@ import scala.util.Try
 import scala.concurrent.Future
 
 @Singleton
-class SightingsController @Inject() (sightingStorage: SightingStorage, cc: ControllerComponents)(implicit executionContext: ExecutionContext) extends AbstractController(cc) {
+class SightingsController @Inject() (sightingStorage: SightingInterface, specieStorage: SpecieInterface, cc: ControllerComponents)
+                                    (implicit executionContext: ExecutionContext) extends AbstractController(cc) {
 
-  implicit val sightingWrites = new Writes[Sighting] { // under construction, now it is not needed?
-    def writes(sighting: Sighting) = Json.obj(
-      "description" -> sighting.description,
-      "specie" -> sighting.specie,
-      //   "ts" -> sighting.ts,
-      "count" -> sighting.count)
-  }
 
   implicit val readDateTime: Reads[DateTime] = new Reads[DateTime] {
 
@@ -71,7 +65,7 @@ class SightingsController @Inject() (sightingStorage: SightingStorage, cc: Contr
   }
 
   def species() = Action.async { request =>
-    val duckSpecies = sightingStorage.listSpecies
+    val duckSpecies = specieStorage.listSpecies
     duckSpecies.map(ds => ds.map(_.toString()).mkString(", "))
       .map(x => Ok(x))
   }
