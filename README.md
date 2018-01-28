@@ -19,13 +19,13 @@ $ sbt run
 ```
 ## Usage
 
-### To get sightings already made and saved.
+#### To get sightings already made and saved.
 GET /sightings
 
-### To get existing species. 
+#### To get existing species. 
 GET /species
 
-### To post a new sighting. Only existing species accepted.
+#### To post a new sighting. Only existing species accepted.
 
 POST sighting/report 
 ```
