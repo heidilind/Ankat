@@ -18,3 +18,25 @@ To start server run
 $ sbt run
 ```
 ## Usage
+
+To get sightings already made and saved.
+GET /sightings
+
+To get existing species. 
+GET /species
+
+To post a new sighting. Only existing species accepted.
+
+POST sighting/report 
+```
+{
+    "id": 5,
+    "species": "lesser scaup",
+    "description": "brown and said Kwak",
+    "dateTime": "2016-11-29T10:00:01Z",
+    "count": 239
+}
+```
+
+
+
